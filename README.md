@@ -490,34 +490,7 @@ The result reveals exactly which part of the finger — tip, nail, or skin — d
 
 ---
 
-## 📦 3D Printed Enclosure
-
-The device enclosure is designed in **OpenSCAD** and located at:
-
-```
-rpi_input/hardware_3d_model/enclosure.scad
-```
-
-Open with [OpenSCAD](https://openscad.org/) (free), render with `F6`, and export as `.stl` for slicing.
-
-**Design features:**
-
-- Slots for Raspberry Pi 4 mounting
-- Opening for RPi Camera Module ribbon cable
-- Side cutouts for I²C sensor wiring
-- Finger placement guide for consistent camera distance
-- LED indicator windows on the front face
-
-**Recommended print settings:**
-
-- Material: PETG or PLA+
-- Layer height: 0.2 mm
-- Infill: 20%
-- Supports: Yes (for the camera slot)
-
----
-
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 | Problem                                    | Cause                               | Fix                                                                       |
 | ------------------------------------------ | ----------------------------------- | ------------------------------------------------------------------------- |
@@ -535,7 +508,7 @@ Open with [OpenSCAD](https://openscad.org/) (free), render with `F6`, and export
 
 ---
 
-## 📖 Class Definitions
+## Class Definitions
 
 | Index | Class Name     | Display Label                    | Clinical Meaning                                                    |
 | ----- | -------------- | -------------------------------- | ------------------------------------------------------------------- |
