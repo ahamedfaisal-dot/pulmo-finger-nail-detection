@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finger Lung Classifier</title>
+</head>
+<body>
+    <h1>Finger Lung Classification</h1>
+    <p>Upload a finger image to classify:</p>
+
+    <form action="/predict" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <br><br>
+        <button type="submit">Classify</button>
+    </form>
+
+    {% if result %}
+    <hr>
+    <h2>Prediction: {{ result.class_name }}</h2>
+    <p><b>Confidence:</b> {{ result.confidence }}%</p>
+
+    <h3>All Class Probabilities:</h3>
+    <table border="1" cellpadding="6">
+        <tr><th>Class</th><th>Probability</th></tr>
+        {% for p in result.all_probs %}
+        <tr>
+            <td>{{ p.class_name }}</td>
+            <td>{{ p.confidence }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <div style="display: flex; gap: 20px; align-items: flex-start;">
+        <div>
+            <h4>Uploaded Image</h4>
+            <img src="data:image/jpeg;base64,{{ result.image_data }}" width="256" style="border: 1px solid #ccc;">
+        </div>
+        {% if result.cam_data %}
+        <div>
+            <h4>Grad-CAM (Focus Area)</h4>
+            <img src="data:image/jpeg;base64,{{ result.cam_data }}" width="256" style="border: 1px solid #ccc;">
+            <p style="font-size: 14px; color: #666;">Heatmap of AI decision focus</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</body>
+</html>

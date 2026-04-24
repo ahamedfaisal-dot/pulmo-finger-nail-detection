@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Trace - Medical Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7fb;
+            color: #1e293b;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .report-page {
+            background: #fff;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        .header {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 28px;
+        }
+
+        .header .meta {
+            text-align: right;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .box {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .status-healthy { color: #059669; }
+        .status-alert { color: #dc2626; }
+
+        .img-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .img-container {
+            text-align: center;
+        }
+
+        .img-container h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .report-page {
+                box-shadow: none;
+                width: auto;
+                height: auto;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="report-page">
+        <div class="header">
+            <div>
+                <h1>Life Trace Edge Hub</h1>
+                <div style="color: #64748b; font-size: 14px; margin-top: 4px;">Diagnostic Report</div>
+            </div>
+            <div class="meta">
+                <div><strong>Scan Timestamp:</strong> {{ timestamp }}</div>
+                <div><strong>Generated:</strong> <script>document.write(new Date().toLocaleString())</script></div>
+            </div>
+        </div>
+
+        <div class="section-title">Diagnostic Conclusion</div>
+        <div class="grid">
+            <div class="box">
+                <div class="label">Condition Detected</div>
+                <div class="value {% if 'Healthy' in result.class_name %}status-healthy{% else %}status-alert{% endif %}">
+                    {{ result.class_name }}
+                </div>
+            </div>
+            <div class="box">
+                <div class="label">AI Confidence Level</div>
+                <div class="value">{{ result.confidence }}%</div>
+            </div>
+        </div>
+
+        <div class="section-title">Patient Vitals Snapshot</div>
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="box">
+                <div class="label">Body Temp</div>
+                <div class="value">{{ sensors.temperature }}°C</div>
+            </div>
+            <div class="box">
+                <div class="label">Heart Rate</div>
+                <div class="value">{{ sensors.heart_rate }} BPM</div>
+            </div>
+            <div class="box">
+                <div class="label">Blood Oxygen (SpO2)</div>
+                <div class="value">{{ sensors.spo2 }}%</div>
+            </div>
+        </div>
+
+        <div class="section-title">Imaging Analysis (Grad-CAM)</div>
+        <div class="img-grid">
+            <div class="img-container">
+                <h4>Original Source Image</h4>
+                <img src="data:image/jpeg;base64,{{ result.image_data }}">
+            </div>
+            <div class="img-container">
+                <h4>AI Attention Heatmap</h4>
+                {% if result.cam_data %}
+                <img src="data:image/jpeg;base64,{{ result.cam_data }}">
+                {% else %}
+                <div style="padding: 40px; background: #f8fafc; border: 1px dashed #cbd5e1;">Heatmap Unavailable</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="footer">
+            Report generated automatically by Life Trace Edge Diagnostic System.<br>
+            Note: This is an automated AI analysis. It should not replace professional medical judgment.
+        </div>
+    </div>
+
+    <script>
+        // Automatically prompt the print/save as PDF dialog when opened!
+        window.onload = function() {
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

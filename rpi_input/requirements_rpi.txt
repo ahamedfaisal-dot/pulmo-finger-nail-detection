@@ -1,0 +1,7 @@
+flask
+onnxruntime
+numpy
+Pillow
+smbus2
+RPi.GPIO
+opencv-python-headless

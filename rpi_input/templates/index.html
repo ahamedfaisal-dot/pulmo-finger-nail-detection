@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Trace - Lung Health Dashboard</title>
+    <!-- Use Inter font for a professional look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7fb;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #059669;
+            --success-hover: #047857;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px 20px;
+        }
+
+        header {
+            margin-bottom: 40px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Sensor Grid */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .sensor-item {
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .sensor-item:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .sensor-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .sensor-val {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Action Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .action-card {
+            background: var(--bg-color);
+            padding: 30px 24px;
+            border-radius: 12px;
+            border: 1px dashed var(--border);
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-card:hover {
+            border-color: var(--text-muted);
+            background: #fff;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .action-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+        }
+
+        .file-input-wrapper {
+            margin-bottom: 15px;
+        }
+
+        input[type="file"] {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        input[type="file"]::file-selector-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background 0.2s;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: var(--bg-color);
+        }
+
+        .error-banner {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 4px solid #ef4444;
+        }
+
+        /* Loading state */
+        .btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Life Trace Edge Hub</h1>
+            <div class="subtitle">Real-time Lung Health Diagnostics & Vitals Monitoring</div>
+        </header>
+
+        {% if error %}
+        <div class="error-banner">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Vitals Dashboard -->
+        <div class="card">
+            <div class="card-header">Live Patient Vitals</div>
+            <div class="sensor-grid">
+                <div class="sensor-item">
+                    <div class="sensor-label">Body Temp</div>
+                    <div class="sensor-val" id="temp">{{ sensors.temperature }}<span style="font-size: 16px; color: var(--text-muted);">°C</span></div>
+                </div>
+                <div class="sensor-item">
+                    <div class="sensor-label">Heart Rate</div>
+                    <div class="sensor-val" id="hr">{{ sensors.heart_rate }}<span style="font-size: 16px; color: var(--text-muted);"> BPM</span></div>
+                </div>
+                <div class="sensor-item">
+                    <div class="sensor-label">Oxygen (SpO2)</div>
+                    <div class="sensor-val" id="spo2">{{ sensors.spo2 }}<span style="font-size: 16px; color: var(--text-muted);">%</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Imaging Actions -->
+        <div class="card">
+            <div class="card-header">Diagnostic Imaging</div>
+            <div class="action-grid">
+                <!-- RPi Camera Live Preview -->
+                <div class="action-card" id="cameraCard">
+                    <div class="action-title">Hardware Camera Capture</div>
+                    <div class="action-desc">Position your subject with a live preview before analyzing.</div>
+                    
+                    <button type="button" class="btn btn-success" id="openCameraBtn" onclick="startCamera()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        Open Live Preview
+                    </button>
+
+                    <div id="livePreviewContainer" style="display: none; margin-top: 15px; width: 100%;">
+                        <img id="liveFeed" alt="Live Camera Feed" style="width: 100%; max-width: 400px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
+                        
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button type="button" class="btn btn-primary" id="snapBtn" onclick="snapAndAnalyze()">Snap & Analyze</button>
+                            <button type="button" class="btn" style="background: #e2e8f0; color: #1e293b;" onclick="stopCamera()">Cancel</button>
+                        </div>
+                    </div>
+                    
+                    <canvas id="snapshotCanvas" style="display: none;"></canvas>
+                </div>
+
+                <!-- Manual Upload Form -->
+                <div class="action-card">
+                    <div class="action-title">Manual Image Upload</div>
+                    <div class="action-desc">Upload an existing image from your local file system for classification analysis.</div>
+                    <form action="/predict" method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="file-input-wrapper">
+                            <input type="file" name="image" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="uploadBtn">Analyze Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Live Camera Logic
+        function startCamera() {
+            document.getElementById('openCameraBtn').style.display = 'none';
+            document.getElementById('livePreviewContainer').style.display = 'block';
+            document.getElementById('liveFeed').src = '/video_feed?' + new Date().getTime();
+        }
+
+        function stopCamera() {
+            document.getElementById('liveFeed').src = '';
+            document.getElementById('livePreviewContainer').style.display = 'none';
+            document.getElementById('openCameraBtn').style.display = 'inline-flex';
+        }
+
+        function snapAndAnalyze() {
+            const btn = document.getElementById('snapBtn');
+            btn.innerHTML = 'Analyzing...';
+            btn.classList.add('loading');
+            
+            const img = document.getElementById('liveFeed');
+            const canvas = document.getElementById('snapshotCanvas');
+            
+            canvas.width = img.naturalWidth || 640;
+            canvas.height = img.naturalHeight || 480;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            canvas.toBlob((blob) => {
+                stopCamera();
+                
+                const dataTransfer = new DataTransfer();
+                const file = new File([blob], "snapshot.jpg", { type: "image/jpeg" });
+                dataTransfer.items.add(file);
+                
+                const hiddenForm = document.createElement('form');
+                hiddenForm.method = 'POST';
+                hiddenForm.action = '/predict';
+                hiddenForm.enctype = 'multipart/form-data';
+                hiddenForm.style.display = 'none';
+                
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.name = 'image';
+                fileInput.files = dataTransfer.files;
+                
+                hiddenForm.appendChild(fileInput);
+                document.body.appendChild(hiddenForm);
+                hiddenForm.submit();
+            }, 'image/jpeg', 0.95);
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const btn = document.getElementById('uploadBtn');
+            btn.innerHTML = 'Uploading...';
+            btn.classList.add('loading');
+        });
+
+        // Poll for live sensor data every 3 seconds
+        setInterval(async () => {
+            try {
+                const resp = await fetch('/get_sensors');
+                const data = await resp.json();
+                document.getElementById('temp').innerHTML = data.temperature + '<span style="font-size: 16px; color: var(--text-muted);">°C</span>';
+                document.getElementById('hr').innerHTML = data.heart_rate + '<span style="font-size: 16px; color: var(--text-muted);"> BPM</span>';
+                document.getElementById('spo2').innerHTML = data.spo2 + '<span style="font-size: 16px; color: var(--text-muted);">%</span>';
+            } catch (err) {
+                console.error("Failed to fetch sensor updates", err);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

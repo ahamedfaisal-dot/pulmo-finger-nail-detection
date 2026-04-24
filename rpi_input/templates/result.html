@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Trace - Analysis Results</title>
+    <!-- Use Inter font for a professional look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7fb;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            
+            /* Status colors */
+            --status-healthy: #059669;
+            --status-healthy-bg: #d1fae5;
+            --status-alert: #dc2626;
+            --status-alert-bg: #fee2e2;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .btn-back {
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            background: #fff;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back:hover {
+            background: var(--bg-color);
+            box-shadow: var(--shadow);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        /* Result Header Banner */
+        .result-banner {
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .result-banner.healthy {
+            background-color: var(--status-healthy-bg);
+            border-left: 4px solid var(--status-healthy);
+        }
+
+        .result-banner.alert {
+            background-color: var(--status-alert-bg);
+            border-left: 4px solid var(--status-alert);
+        }
+
+        .result-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .healthy .result-title { color: var(--status-healthy); }
+        .alert .result-title { color: var(--status-alert); }
+
+        .class-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .confidence-box {
+            text-align: right;
+        }
+        
+        .conf-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .conf-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Snapshot Vitals */
+        .snapshot-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .sensor-item {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .sensor-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .sensor-val {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Images Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .img-container {
+            text-align: center;
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .img-container h4 {
+            margin: 0 0 10px 0;
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .img-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* Probability Table */
+        .prob-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .prob-table th, .prob-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .prob-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background-color: var(--bg-color);
+        }
+
+        .prob-bar-container {
+            width: 100%;
+            background: var(--border);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .prob-bar {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <h1>Diagnostic Report</h1>
+            <a href="/" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Return to Dashboard
+            </a>
+        </div>
+
+        {% if result %}
+        
+        <!-- Logic to determine banner color based on class -->
+        {% set is_healthy = 'Healthy' in result.class_name %}
+        
+        <div class="card">
+            <div class="result-banner {{ 'healthy' if is_healthy else 'alert' }}">
+                <div>
+                    <div class="result-title">Detected Condition</div>
+                    <div class="class-name">{{ result.class_name }}</div>
+                </div>
+                <div class="confidence-box">
+                    <div class="conf-label">AI Confidence Level</div>
+                    <div class="conf-value">{{ result.confidence }}%</div>
+                </div>
+            </div>
+
+            <!-- Report Export QR -->
+            <div style="background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: var(--primary);">Medical Report Export</h3>
+                    <p style="margin: 0; color: var(--text-muted); font-size: 14px;">Scan the QR code with your mobile device, or click it to view the printable A4 PDF report.</p>
+                </div>
+                <div>
+                    <a href="/report/{{ report_id }}" target="_blank">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=http://{{ request.host }}/report/{{ report_id }}" alt="Report QR Code" style="border: 2px solid var(--border); border-radius: 4px; padding: 4px; background: white;">
+                    </a>
+                </div>
+            </div>
+
+            <!-- Vitals Snapshot -->
+            <div class="snapshot-title">Vitals Snapshot at Capture Time</div>
+            <div class="sensor-grid">
+                <div class="sensor-item">
+                    <div class="sensor-label">Body Temp</div>
+                    <div class="sensor-val">{{ sensors.temperature }}°C</div>
+                </div>
+                <div class="sensor-item">
+                    <div class="sensor-label">Heart Rate</div>
+                    <div class="sensor-val">{{ sensors.heart_rate }} BPM</div>
+                </div>
+                <div class="sensor-item">
+                    <div class="sensor-label">SpO2</div>
+                    <div class="sensor-val">{{ sensors.spo2 }}%</div>
+                </div>
+            </div>
+
+            <!-- Imaging -->
+            <div class="snapshot-title">Imaging Analysis</div>
+            <div class="gallery-grid">
+                <div class="img-container">
+                    <h4>Original Image</h4>
+                    <img src="data:image/jpeg;base64,{{ result.image_data }}" alt="Original Image">
+                    <div class="img-desc">Source capture from camera or upload.</div>
+                </div>
+                
+                {% if result.cam_data %}
+                <div class="img-container">
+                    <h4>Grad-CAM Explainability</h4>
+                    <img src="data:image/jpeg;base64,{{ result.cam_data }}" alt="Grad-CAM Heatmap">
+                    <div class="img-desc">Heatmap highlights regions influencing the AI's diagnosis. Red indicates high importance.</div>
+                </div>
+                {% else %}
+                <div class="img-container" style="display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                    Grad-CAM data unavailable
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Detailed Probabilities -->
+            <div style="margin-top: 40px;">
+                <div class="snapshot-title">Detailed Class Probabilities</div>
+                <table class="prob-table">
+                    <thead>
+                        <tr>
+                            <th width="40%">Condition Class</th>
+                            <th width="60%">Probability Breakdown</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in result.all_probs %}
+                        <tr>
+                            <td><strong>{{ p.class_name }}</strong></td>
+                            <td>
+                                <div>{{ p.confidence }}%</div>
+                                <div class="prob-bar-container">
+                                    <div class="prob-bar" style="width: {{ p.confidence }}%;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <h2 style="color: #dc2626;">Error Processing Image</h2>
+            <p>No result data found. Please return to the dashboard and try again.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

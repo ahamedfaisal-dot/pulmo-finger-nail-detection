@@ -1,0 +1,83 @@
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyc
+
+# ── Virtual Environments ─────────────────────────────────────────────
+venv/
+venv_gpu/
+.venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# ── Large Dataset & Training Artifacts ──────────────────────────────
+train/
+test/
+Result/
+*.mat
+workspace.bin
+
+# ── ML Model Files (large binaries – store with Git LFS or separately) ─
+*.onnx
+*.pt
+*.pth
+*.h5
+*.pkl
+*.npy
+
+# ── Database Files ───────────────────────────────────────────────────
+*.db
+*.sqlite3
+*.sqlite
+
+# ── Logs & Reports ───────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Environment / Secrets ────────────────────────────────────────────
+.env
+.env.*
+*.secret
+
+# ── OS Generated Files ───────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── IDE / Editor Files ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# ── Jupyter Notebooks ────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── Flask / Web ──────────────────────────────────────────────────────
+instance/
+*.cfg
+
+# ── Raspberry Pi Cache ───────────────────────────────────────────────
+rpi_input/__pycache__/
+rpi_input/*.db
+
+# ── Temporary Files ──────────────────────────────────────────────────
+*.tmp
+*.bak
+*.orig
+tmp/
+temp/
