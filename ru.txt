@@ -1,0 +1,8 @@
+sudo apt install cmake git libdrm-dev
+git clone https://github.com/juj/fbcp-ili9341.git
+cd fbcp-ili9341
+mkdir build
+cd build
+cmake -DILI9486=ON -DSPI_BUS_CLOCK_DIVISOR=20 ..
+make -j
+sudo install fbcp-ili9341 /usr/local/bin/fbcp

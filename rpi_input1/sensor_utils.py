@@ -146,16 +146,17 @@ class MAX30102:
             return {"heart_rate": self.current_hr, "spo2": self.current_spo2}
 
 # ── Global Instances ────────────────────────────────────────────────
-temp_drv = MLX90614()
-hr_drv = MAX30102()
+# Sensors are now handled by ESP8266. These drivers can be re-enabled if needed.
+# temp_drv = MLX90614()
+# hr_drv = MAX30102()
 
 def get_sensor_data():
-    """Unified entry point for Flask."""
-    temp = temp_drv.read_temp()
-    health = hr_drv.calculate_health()
+    """Unified entry point (Legacy/Fallback)."""
+    # temp = temp_drv.read_temp()
+    # health = hr_drv.calculate_health()
     
     return {
-        "temperature": temp if temp > 0 else "Err",
-        "heart_rate": health["heart_rate"],
-        "spo2": health["spo2"]
+        "temperature": "N/A",
+        "heart_rate": "N/A",
+        "spo2": "N/A"
     }

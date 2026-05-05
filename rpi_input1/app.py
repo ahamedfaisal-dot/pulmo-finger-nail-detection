@@ -9,7 +9,8 @@ import uuid
 from PIL import Image
 import onnxruntime as ort
 from flask import Flask, render_template, request, jsonify, Response
-from sensor_utils import get_sensor_data
+# from sensor_utils import get_sensor_data  # No longer using local sensors for temp/HR
+
 try:
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
@@ -24,6 +25,14 @@ except ImportError:
     GPIO_AVAILABLE = False
 
 app = Flask(__name__)
+
+# Global storage for sensor data from ESP8266
+latest_sensor_data = {
+    "temperature": "N/A",
+    "heart_rate": "N/A",
+    "spo2": "N/A"
+}
+
 
 # Initialize SQLite Database
 DB_FILE = os.path.join(os.path.dirname(__file__), "diagnostics.db")
@@ -69,14 +78,32 @@ def preprocess(image_bytes):
 
 @app.route("/")
 def index():
-    # Initial sensor read for the home page
-    sensors = get_sensor_data()
-    return render_template("index.html", result=None, sensors=sensors)
+    # Use the latest data received from ESP8266
+    return render_template("index.html", result=None, sensors=latest_sensor_data)
 
 @app.route("/get_sensors")
 def get_sensors():
     """Endpoint for live sensor updates via AJAX."""
-    return jsonify(get_sensor_data())
+    return jsonify(latest_sensor_data)
+
+@app.route("/update_sensors", methods=["POST"])
+def update_sensors():
+    """Endpoint for ESP8266 to POST new sensor data."""
+    global latest_sensor_data
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "No data"}), 400
+        
+        # Update our global store
+        latest_sensor_data["temperature"] = data.get("temperature", "N/A")
+        latest_sensor_data["heart_rate"] = data.get("heart_rate", "N/A")
+        latest_sensor_data["spo2"] = data.get("spo2", "N/A")
+        
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 def _process_image_bytes(image_bytes):
     global session, CAM_WEIGHTS
@@ -171,7 +198,8 @@ def capture_image_rpicam():
 @app.route("/capture_predict", methods=["POST"])
 def capture_predict():
     image_bytes = capture_image_rpicam()
-    sensors = get_sensor_data()
+    sensors = latest_sensor_data
+
     if not image_bytes:
         return render_template("index.html", result=None, sensors=sensors, error="Failed to capture image from camera.")
     
@@ -205,9 +233,10 @@ def capture_predict():
 @app.route("/predict", methods=["POST"])
 def predict():
     file = request.files.get("image")
-    sensors = get_sensor_data()
+    sensors = latest_sensor_data
     if not file: 
         return render_template("index.html", result=None, sensors=sensors)
+
 
     image_bytes = file.read()
     result = _process_image_bytes(image_bytes)
